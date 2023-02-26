@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import { useTheme } from '../hooks/useTheme'
+import trashcan from "../assets/trashcan.svg"
+import { doc, deleteDoc } from "firebase/firestore";
+import { db } from '../firebase/config';
 
-// styles
 import './RecipeList.css'
 
 export default function RecipeList({ recipes }) {
@@ -12,6 +14,11 @@ export default function RecipeList({ recipes }) {
     return <div className="error">No recipes to load...</div>
   }
 
+const handleClick = async(id) => {
+  await deleteDoc(doc(db, "recipes", id));
+
+}
+
   return (
     <div className="recipe-list">
       {recipes.map(recipe => (
@@ -20,6 +27,7 @@ export default function RecipeList({ recipes }) {
           <p>{recipe.cookingTime} to make.</p>
           <div>{recipe.method.substring(0, 100)}...</div>
           <Link to={`/recipes/${recipe.id}`}>Cook This</Link>
+          <img className='delete' src={trashcan} onClick={()=>handleClick(recipe.id)} alt=" "/>
         </div>
       ))}
     </div>
